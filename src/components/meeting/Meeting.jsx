@@ -41,10 +41,10 @@ const Meeting = (observer(({ id }) => {
             ClientName: {MeetingStore.meetingList[id].clientName}
           </div>
           <div>
-            Se: {MeetingStore.meetingList[id].serviceType}
+          ServiceType: {MeetingStore.meetingList[id].serviceType}
           </div>
           <div className={`SingleMeeting-date ${getMeetingColor(MeetingStore.meetingList[id].dateTime)}`}>
-            {MeetingStore.meetingList[id].dateTime}
+          DateTime:  {MeetingStore.meetingList[id].dateTime}
           </div>
         </Paper>
       </div>
