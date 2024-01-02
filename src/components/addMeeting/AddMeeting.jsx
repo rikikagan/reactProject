@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { observer } from "mobx-react-lite";
-import Store from '../../DataStore/Store';
+import ServicesStore from '../../DataStore/ServicesStore';
+import MeetingStore from '../../DataStore/MeetingStore';
+import {Button} from '@mui/material';
 
 const Customer = observer(() => {
-  const [meeting, setMeeting] = useState({
-    serviceType: '',
-    date: '',
-    clientName: '',
-    clientEmail: '',
-    clientPhone: ''
-  });
-  
+
   const popAddMeeting = async () => {
     const { value: formValues } = await Swal.fire({
       title: 'Add Meeting',
@@ -21,27 +16,35 @@ const Customer = observer(() => {
         '<label for="phone">Phone:</label>' +
         '<input id="phone" class="swal2-input">' +
         '<label for="mail">Email:</label>' +
-        '<input id="mail" class="swal2-input">' +'<br>'+
+        '<input id="mail" type="email" class="swal2-input">' +
+        '<br>' +
         '<label for="date">Date</label>' +
-        '<input type="date" id="date" class="swal2-input">' +'<br>'+
+        '<input type="datetime-local" id="dateTime" class="swal2-input">' +
+        '<br>' +
         '<label for="kindMeeting">Meeting kind:</label>' +
-        '<input id="kindMeeting" class="swal2-input">',
+        `<div class="swal2-select">` +
+        `<select id="kindMeeting" class="swal2-input">` +
+        ServicesStore.servicesList.map((service) => `<option value="${service.name}">${service.name}</option>`).join('') +
+        `</select>` +
+        `</div>`,
+
+      confirmButtonColor: '#2f4f4f',
       focusConfirm: false,
       preConfirm: () => {
         const clientName = document.getElementById('name').value;
         const clientPhone = document.getElementById('phone').value;
         const clientEmail = document.getElementById('mail').value;
-        const date = document.getElementById('date').value;
+        const dateTime = document.getElementById('dateTime').value;
         const serviceType = document.getElementById('kindMeeting').value;
 
-        if (clientName === '' || clientPhone === '' || clientEmail === '' || date === '' || serviceType === '') {
+        if (clientName === '' || clientPhone === '' || clientEmail === '' || dateTime === '' || serviceType === '') {
           Swal.showValidationMessage('Please fill in all fields');
           return false;
         }
 
         return {
           serviceType,
-          date,
+          dateTime,
           clientName,
           clientEmail,
           clientPhone
@@ -50,14 +53,16 @@ const Customer = observer(() => {
     });
 
     if (formValues) {
-      Store.addMeeting(formValues);
-      Swal.fire('Success', 'Meeting added successfully!', 'success');
+      MeetingStore.PostMeeting(formValues);
+
     }
   };
 
   return (
     <>
-      <button onClick={popAddMeeting}>Add Meeting</button>
+      <Button style={{ textDecoration: 'none', color: 'black'}} onClick={popAddMeeting}>
+        Add Meeting
+      </Button>
       
     </>
   );

@@ -3,99 +3,102 @@ import BusinessDataStore from '../../DataStore/BusinessDataStore';
 import { observer } from 'mobx-react';
 import { useState } from 'react';
 import BusinessDetails from './BusinessDetails';
+
 const EditBusinessDetails = observer(() => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [Name, setName] = useState(BusinessDataStore.businessData.name)
+  const [Adress, setAddress] = useState(BusinessDataStore.businessData.address)
+  const [Phone, setPhone] = useState(BusinessDataStore.businessData.phone)
+  const [Owner, setOwner] = useState(BusinessDataStore.businessData.owner)
+  const [Logo, setLogo] = useState(BusinessDataStore.businessData.logo)
+  const [Description, setDescription] = useState(BusinessDataStore.businessData.description)
+  
   const handleEdit = () => {
-    setIsEditing(true);
-    const formData = document.getElementById('editForm');
-    const businessData = {
-      name: formData.get('name'),
-      address: formData.get('address'),
-      phone: formData.get('phone'),
-      owner: formData.get('owner'),
-      logo: formData.get('logo'),
-      description: formData.get('description'),
+
+    const UpdatedData = {
+      name: Name,
+      address: Adress,
+      phone: Phone,
+      owner: Owner,
+      logo: Logo,
+      description: Description,
     };
-    BusinessDataStore.updateData(businessData);
+    BusinessDataStore.UpdateData(UpdatedData);
+    BusinessDataStore.setIsEditing();
   };
-  const handleSave = () => {
-    setIsEditing(false);
-};
+
+
   return (
     <>
-      {isEditing ? (
-        <BusinessDetails onSave={handleSave} />
-      ) : (
-        <Card sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-          <Typography variant="h5" gutterBottom>
-            Edit Business Details
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                label="Name"
-                // value={BusinessDataStore.businessData.name}
-                id="editName"
-                //onChange={(e) => BusinessDataStore.businessData.name = e.target.value}
-                fullWidth
-                margin="normal"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Address"
-                id="editAddress"
-                //onChange={(e) => BusinessDataStore.businessData.address = e.target.value}
-                fullWidth
-                margin="normal"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="phone"
-                id="editPhone"
-                //onChange={(e) => BusinessDataStore.businessData.phone = e.target.value}
-                fullWidth
-                margin="normal"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="owner"
-                id="editowner"
-                //onChange={(e) => BusinessDataStore.businessData.owner = e.target.value}
-                fullWidth
-                margin="normal"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="logo"
-                id="editLogo"
-                //onChange={(e) => BusinessDataStore.businessData.logo = e.target.value}
-                fullWidth
-                margin="normal"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="description"
-                id="editdescription"
-                //onChange={(e) => BusinessDataStore.businessData.description = e.target.value}
-                fullWidth
-                margin="normal"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button variant="contained" onClick={handleEdit}>
-                Save
-              </Button>
-            </Grid>
+      <Card sx={{ p: 2, display: 'flex', flexDirection: 'column', marginTop:'5%'}}>
+        <Typography variant="h5" gutterBottom>
+          Edit Business Details
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              label="Name"
+              defaultValue={BusinessDataStore.businessData.name}
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
           </Grid>
-        </Card>
-      )
-}
-</>
-      );
+          <Grid item xs={12}>
+            <TextField
+              label="Address"
+              defaultValue={BusinessDataStore.businessData.address}
+              onChange={(e) => setAddress(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="phone"
+              defaultValue={BusinessDataStore.businessData.phone}
+              onChange={(e) => setPhone(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="owner"
+              defaultValue={BusinessDataStore.businessData.owner}
+              onChange={(e) => setOwner(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="logo"
+              type='url'
+              defaultValue={BusinessDataStore.businessData.logo}
+              onChange={(e) => setLogo(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="description"
+              defaultValue={BusinessDataStore.businessData.description}
+              onChange={(e) => setDescription(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button variant="contained"  onClick={handleEdit}>
+              Save
+            </Button>
+          </Grid>
+        </Grid>
+      </Card>
+
+      
+    </>
+  );
 });
 export default EditBusinessDetails;

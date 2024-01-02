@@ -2,56 +2,72 @@ import { observer } from "mobx-react";
 import BusinessDataStore from "../../DataStore/BusinessDataStore";
 import EditBusinessDetails from "./EditBusinessDetails";
 import { Button, Card, Grid, Typography } from '@mui/material';
-import { useState } from "react";
-const BusinessDetails = observer(() => {
-    const [isEditing, setIsEditing] = useState(false);
+import { useEffect } from "react";
+import './BusinessDetails.css'
 
+const BusinessDetails = observer(() => {
     const handleEdit = () => {
-        setIsEditing(!isEditing);
+        BusinessDataStore.setIsEditing();
     };
+
+    useEffect(() => {
+        BusinessDataStore.GetData()
+    }, []);
+
     return (
         <>
-            {isEditing ? (
-            <EditBusinessDetails onSave={handleEdit} />
-            ) : (
-                <Card sx={{ padding: "1rem", marginBottom: "1rem" }}>
+        {BusinessDataStore.isEditing ? (
+            <EditBusinessDetails />
+        ) : (
+            <header sx={{ padding: "1rem", marginBottom: "1rem" }}>
+                <div>
+                    <Grid item xs={12}>
+                        <img src={BusinessDataStore.businessData.logo} alt="Logo" />
+                    </Grid>
+                </div>
+                <div id="details">
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <Typography variant="body1">
-                               name: {BusinessDataStore.businessData.name}
+                            <Typography variant="body1" className="details" >
+                                {BusinessDataStore.businessData.name}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            <Typography variant="body1">
-                                Address: {BusinessDataStore.businessData.address}
+                            <Typography variant="body1" className="details">
+                                {BusinessDataStore.businessData.address}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            <Typography variant="body1">
-                                Phone: {BusinessDataStore.businessData.phone}
+                            <Typography variant="body1" className="details">
+                                {BusinessDataStore.businessData.phone}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                            <Typography variant="body1">
-                                Owner: {BusinessDataStore.businessData.owner}
+                            <Typography variant="body1" className="details">
+                                {BusinessDataStore.businessData.owner}
                             </Typography>
                         </Grid>
+
                         <Grid item xs={12}>
-                         logo:   <img src={BusinessDataStore.businessData.logo} alt="Logo" style={{ width: "100%" }} />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="body1">
-                               description: {BusinessDataStore.businessData.description}
+                            <Typography variant="body1" className="details">
+                                {BusinessDataStore.businessData.description}
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Button variant="contained" onClick={handleEdit}>
-                        Edit
-                    </Button>
-                </Card>
-            )
-            }
-        </>
+                </div>
+                <div id="edit">
+                    {BusinessDataStore.isLogin ?
+                        (
+                            <Button variant="outlined" style={{ borderColor: 'orange', color: 'orange' }} onClick={handleEdit}>
+                                Edit
+                            </Button>
+                        ) : (null)
+                    }</div>
+
+            </header>
+        )
+        }
+    </>
     )
 }
 )

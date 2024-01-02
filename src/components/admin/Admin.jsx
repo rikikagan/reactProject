@@ -1,21 +1,17 @@
 import { useState } from 'react'
-import {
-  Button,
-  TextField,
-  Grid,
-  Typography,
-  Box,
-  Container,
-  FormControl,
-  FormLabel,
-} from '@mui/material'
-import Swal from 'sweetalert2';
 import { Outlet, Link } from "react-router-dom"
+import {
+  Button, TextField, Grid, Typography, Box, Container, FormControl, FormLabel,
+} from '@mui/material'
+import { observer } from "mobx-react";
+import Swal from 'sweetalert2';
+import BusinessDataStore from '../../DataStore/BusinessDataStore';
 import BusinessDetails from '../businessDetails/BusinessDetails';
-import EditBusinessDetails from '../businessDetails/EditBusinessDetails';
+import ServicesStore from '../../DataStore/ServicesStore';
+import './Admin.css';
 
-function AdminLogin() {
-  const [isLogin, setIsLogin] = useState(false)
+const AdminLogin = observer(() => {
+
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
 
@@ -29,9 +25,9 @@ function AdminLogin() {
         "Content-Type": "application/json",
       },
     })
-    // רובי בוט איך להוסיף קאץ
+
     if (response.ok)
-      setIsLogin(true)
+      BusinessDataStore.setIsLogin(true)
     else {
 
       Swal.fire('Error', 'Entrance for manager only!', 'error', 'Try again');
@@ -39,14 +35,15 @@ function AdminLogin() {
       setPassword("")
     }
   }
+
   return (
     <Container component="main" maxWidth="xs">
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 8 }}>
+      <div style={{ display: 'flex',position:'relative', flexDirection: 'column', alignItems: 'center'}}>
 
-        {!isLogin ? (
+        {!BusinessDataStore.isLogin ? (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography variant="h4" gutterBottom>
+              <Typography variant="h4" gutterBottom textAlign='center' marginTop='30%'>
                 Admin Login
               </Typography>
               <FormControl fullWidth>
@@ -80,18 +77,25 @@ function AdminLogin() {
         ) : (
           <>
             <BusinessDetails />
-            <br />
-            {/* <EditBusinessDetails /> */}
-            <Link to="./services">Services</Link>
-            |
-            <Link to="./meetings">Meetings</Link>
-            <br />
-            <Outlet />
+           {!BusinessDataStore.isEditing?(
+            <div className='links' style={{ gap: '2cm', width:'90%'}}>
+                
+                <Button variant="outlined" style={{ borderColor: 'orange', color: 'orange', zIndex: 999, }}>
+                  <Link to="./services" style={{ textDecoration: 'none', color: 'black' }}>Services</Link>
+                </Button>
+                <Button variant="outlined" style={{ borderColor: 'orange', color: 'orange', zIndex: 999, }}>
+                  <Link to="./meetings" style={{ textDecoration: 'none', color: 'black' }}>Meetings</Link>
+                </Button>
+                <Outlet />
+              </div>
+           ):(null)}
+                        
+
           </>
         )}
-      </Box>
+      </div>
     </Container>
   )
-}
+})
 
-export default AdminLogin
+export default AdminLogin;

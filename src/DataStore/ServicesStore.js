@@ -3,31 +3,53 @@ import { observable, makeObservable, action, computed } from 'mobx';
 class ServicesStore {
     servicesList = [
         {
-            serviceName:'ssss',
-            description:'ww'
+            id: "0",
+            name: "טיסה לאמריקה",
+            description: "טיסה לאמריקה",
+            price: 500,
+            duration: 60,
         }
-       
+
     ];
 
     constructor() {
         makeObservable(this,
             {
                 servicesList: observable,
-                addService: action,
+                PostService:action,
+                GetServices: action
             }
         )
     }
-    addService = (service) => {
-        this.servicesList = [...this.servicesList, {
-            serviceName: service.serviceName,
-            description: service.description
-        }];
-    }
-   
-    get servicesList()
-    {
+     PostService = async (NewService) => {
+        const response = await fetch("http://localhost:8787/service", {
+            method: "POST",
+            body: JSON.stringify(NewService),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (response.status === 200) {
+            this.servicesList = [...this.servicesList, {
+                        id:this.servicesList.length,
+                        name: NewService.name,
+                        description: NewService.description,
+                        price:NewService.price,
+                        duration:NewService.duration
+                    }];
+        }
+    };
+    GetServices = async () => {
+        const response = await fetch("http://localhost:8787/services");
+        const services = await response.json();
+        this.servicesList = services;
+    };
+
+    
+    get servicesList() {
         return this.servicesList
     }
-    
+
 }
 export default new ServicesStore();

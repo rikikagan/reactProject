@@ -1,69 +1,86 @@
 import { observable, makeObservable, action, runInAction } from 'mobx';
-
+import Swal from 'sweetalert2';
 class BusinessDataStore {
     businessData
         = {
-            name: "Uri Karmi",
-            address: "Shefala 3 Tel Aviv",
-            phone: "050-7387755",
-            owner: "Tekno Art",
-            logo: "",
-            description: "The best coding academy in the world",
+            name: "TravelWorld ",
+            address: "Natbag",
+            phone: "*2250",
+            owner: "Traveling",
+            logo: "../../../images/Logo.png",
+            description: "The most convenient flight for you!!!!!",
         }
+    isEditing = false;
+    isLogin=false;
     constructor() {
         makeObservable(this,
             {
+                isLogin:observable,
+                isEditing: observable,
                 businessData: observable,
-                updateData: action,
+                setIsLogin:action,
+                UpdateData: action,
+                PostData:action,
+                GetData:action,
             }
         )
-        this.postFirstData();
-        // .this.initData();
+        //הצגת המידע הראשוני- לתצוגה יפה בלבד ניתן להסיר
+        if(this.GetData().name===undefined)
+        {
+            this.PostData(this.businessData)
+        }
     }
-    postFirstData() {
-        fetch("http://localhost:8787/businessData", {
-            method: 'POST',
-            body: JSON.stringify(this.businessData)
-        }).then(() => {
-            response => response.json()
-            console.log("in post")
-        }).catch((error) => {
-            console.log(error);
-        })
+   
+    setIsEditing() {
+        this.isEditing = !this.isEditing;
     }
-    // initData(){
-    //     fetch("http://localhost:8787/businessData").then((res)=>{
-    //         res.json().then((data)=>{
-    //             runInAction(()=>{
-    //                 this.businessData = data;
-    //                 console.log(data)
-    //             })
-    //         });            
-
-    //     }).catch((error)=>{
-    //         console.log(error);
-    //     });
-    // }
-
-    updateData(BussinesItem) {
-        console.log("in update")
-        fetch("http://localhost:8787/businessData", {
-            method: 'PUT',
-            body: BussinesItem
-        }).then((res) => {
-            
-            runInAction(() => {
-                this.businessData = BussinesItem;
-                console.log(this.businessData)
-            });
-
-        }).catch((error) => {
-            console.log(error);
-        })
+    setIsLogin(val) {
+        this.isLogin =val;
     }
+    PostData = async (details) => {
+        const response = await fetch("http://localhost:8787/businessData", {
+            method: "POST",
+            body: JSON.stringify(details),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
 
+        if (response.status === 200) {
+            this.businessData = details;
+        }
+    };
+    GetData = async () => {
+        const response = await fetch("http://localhost:8787/businessData");
+        const data = await response.json();
+        this.businessData = data;
+    };
+
+    UpdateData = async (details) => {
+        const response = await fetch("http://localhost:8787/businessData", {
+          method: "PUT",
+          body: JSON.stringify(details),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (response.status === 200) {
+          this.businessData = details;
+             
+          Swal.fire({
+            confirmButtonColor:'#2f4f4f',
+            title: "The details have been saved",
+            text: "Your details have been successfully entered",
+            icon: "success",
+          });
+        }
+      };
     get businessData() {
         return this.businessData
+    }
+    get isEditing() {
+        return this.isEditing
     }
 
 }
